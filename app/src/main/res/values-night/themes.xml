@@ -1,0 +1,25 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.CriminalIntent" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/orange_primary</item>
+        <item name="colorPrimaryDark">@color/orange_variant</item>
+        <item name="colorAccent">@color/orange_accent</item>
+
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/black</item>
+
+        <!-- Window background -->
+        <item name="android:windowBackground">@color/black</item>
+
+        <!-- Text colors -->
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/orange_accent</item>
+
+        <!-- Button styles -->
+        <item name="buttonStyle">@style/Widget.CriminalIntent.Button</item>
+
+        <!-- Dialog Theme -->
+        <item name="alertDialogTheme">@style/Theme.CriminalIntent.AlertDialog</item>
+    </style>
+</resources>
