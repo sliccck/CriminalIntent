@@ -15,14 +15,16 @@ import java.util.GregorianCalendar;
 
 public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "date";
+    private static final String ARG_REQUEST_KEY = "request_key";
 
     public static final String REQUEST_DATE = "request_date";
     public static final String RESULT_DATE = "result_date";
     public static final String TAG = "DatePickerFragment";
 
-    public static DatePickerFragment newInstance(Date date) {
+    public static DatePickerFragment newInstance(Date date, String requestKey) {
         Bundle args = new Bundle();
         args.putSerializable(ARG_DATE, date);
+        args.putString(ARG_REQUEST_KEY, requestKey);
 
         DatePickerFragment fragment = new DatePickerFragment();
         fragment.setArguments(args);
@@ -33,6 +35,7 @@ public class DatePickerFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         Date date = (Date) requireArguments().getSerializable(ARG_DATE);
+        String requestKey = requireArguments().getString(ARG_REQUEST_KEY);
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -46,10 +49,10 @@ public class DatePickerFragment extends DialogFragment {
                 Date resultDate = new GregorianCalendar(year, month, dayOfMonth).getTime();
                 Bundle result = new Bundle();
                 result.putSerializable(RESULT_DATE, resultDate);
-                getParentFragmentManager().setFragmentResult(REQUEST_DATE, result);
+                getParentFragmentManager().setFragmentResult(requestKey, result);
             }
         };
 
-        return new DatePickerDialog(requireContext(), listener, year, month, day);
+        return new DatePickerDialog(requireContext(), R.style.Theme_CriminalIntent_AlertDialog, listener, year, month, day);
     }
 }

@@ -12,6 +12,9 @@
         <!-- Window background -->
         <item name="android:windowBackground">@color/black</item>
 
+        <!-- Action bar styling to prevent overlapping content -->
+        <item name="windowActionBarOverlay">false</item>
+
         <!-- Text colors -->
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/orange_accent</item>
@@ -21,6 +24,8 @@
 
         <!-- Dialog Theme -->
         <item name="alertDialogTheme">@style/Theme.CriminalIntent.AlertDialog</item>
+        <item name="android:datePickerDialogTheme">@style/Theme.CriminalIntent.AlertDialog</item>
+        <item name="android:timePickerDialogTheme">@style/Theme.CriminalIntent.AlertDialog</item>
     </style>
 
     <style name="Widget.CriminalIntent.Button" parent="Widget.AppCompat.Button">
@@ -30,9 +35,28 @@
 
     <style name="Theme.CriminalIntent.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
         <item name="android:windowBackground">@color/black</item>
+        <item name="android:colorBackground">#222222</item>
+        <item name="colorAccent">@color/orange_primary</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/orange_accent</item>
-        <item name="colorAccent">@color/orange_primary</item>
+
+        <!-- TimePicker styling -->
+        <item name="android:timePickerStyle">@style/Widget.CriminalIntent.TimePicker</item>
+        <item name="android:headerBackground">@color/orange_primary</item>
+        <item name="android:numbersTextColor">@color/black</item>
+        <item name="android:numbersInnerTextColor">@color/black</item>
+        <item name="android:numbersSelectorColor">@color/orange_primary</item>
+        <item name="android:numbersBackgroundColor">#DDDDDD</item>
+        <item name="android:amPmTextColor">@color/black</item>
+    </style>
+
+    <style name="Widget.CriminalIntent.TimePicker" parent="android:Widget.Material.TimePicker">
+        <item name="android:numbersTextColor">@color/black</item>
+        <item name="android:numbersInnerTextColor">@color/black</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="android:textColorSecondary">@color/black</item>
+        <item name="android:numbersSelectorColor">@color/orange_primary</item>
+        <item name="android:numbersBackgroundColor">#DDDDDD</item>
     </style>
 
     <style name="Theme.CriminalIntent" parent="Base.Theme.CriminalIntent" />

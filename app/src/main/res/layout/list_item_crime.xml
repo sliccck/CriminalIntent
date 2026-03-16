@@ -13,23 +13,24 @@
         android:id="@+id/crime_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="76dp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/crime_suspect"
+        android:id="@+id/crime_status"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/orange_accent"
-        android:textStyle="italic"
-        android:visibility="gone"
         app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/crime_title" />
 
@@ -42,7 +43,20 @@
         android:textColor="#CCCCCC"
         app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/crime_suspect" />
+        app:layout_constraintTop_toBottomOf="@id/crime_status" />
+
+    <TextView
+        android:id="@+id/crime_suspect"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="@color/orange_accent"
+        android:textStyle="italic"
+        android:visibility="gone"
+        app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/crime_date" />
 
     <ImageView
         android:id="@+id/crime_solved_icon"
@@ -64,6 +78,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/crime_date" />
+        app:layout_constraintTop_toBottomOf="@id/crime_suspect" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

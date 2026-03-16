@@ -25,6 +25,8 @@
     <string name="contact_police">CONTACT POLICE</string>
     <string name="contacting_police_title">Contacting Police</string>
     <string name="contacting_police_message">Help is on the way!</string>
+    <string name="case_closed">case is close</string>
+    <string name="case_open">case is open</string>
 
     <plurals name="subtitle_plural">
         <item quantity="one">%d crime</item>

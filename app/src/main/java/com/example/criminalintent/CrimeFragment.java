@@ -31,6 +31,8 @@ import androidx.fragment.app.Fragment;
 
 import java.io.File;
 import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
@@ -45,6 +47,7 @@ public class CrimeFragment extends Fragment {
 
     private EditText mTitleField;
     private Button mDateButton;
+    private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private EditText mSuspectField;
@@ -105,14 +108,53 @@ public class CrimeFragment extends Fragment {
                 mPhotoFile
         );
 
+        // Use the crime ID as the unique request key base
+        String dateRequestKey = mCrime.getId().toString() + "_date";
+        String timeRequestKey = mCrime.getId().toString() + "_time";
+
         getParentFragmentManager().setFragmentResultListener(
-                DatePickerFragment.REQUEST_DATE,
+                dateRequestKey,
                 this,
                 (requestKey, bundle) -> {
-                    mCrime.setDate((java.util.Date) bundle.getSerializable(DatePickerFragment.RESULT_DATE));
-                    updateDate();
+                    Date date = (Date) bundle.getSerializable(DatePickerFragment.RESULT_DATE);
+                    updateCrimeDate(date);
+                    updateDateAndTime();
                 }
         );
+
+        getParentFragmentManager().setFragmentResultListener(
+                timeRequestKey,
+                this,
+                (requestKey, bundle) -> {
+                    Date date = (Date) bundle.getSerializable(TimePickerFragment.RESULT_TIME);
+                    updateCrimeTime(date);
+                    updateDateAndTime();
+                }
+        );
+    }
+
+    private void updateCrimeDate(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(mCrime.getDate());
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        mCrime.setDate(calendar.getTime());
+    }
+
+    private void updateCrimeTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minute = calendar.get(Calendar.MINUTE);
+
+        calendar.setTime(mCrime.getDate());
+        calendar.set(Calendar.HOUR_OF_DAY, hour);
+        calendar.set(Calendar.MINUTE, minute);
+        mCrime.setDate(calendar.getTime());
     }
 
     @Nullable
@@ -123,6 +165,7 @@ public class CrimeFragment extends Fragment {
 
         mTitleField = view.findViewById(R.id.crime_title);
         mDateButton = view.findViewById(R.id.crime_date);
+        mTimeButton = view.findViewById(R.id.crime_time);
         mSolvedCheckBox = view.findViewById(R.id.crime_solved);
         mReportButton = view.findViewById(R.id.crime_report);
         mSuspectField = view.findViewById(R.id.crime_suspect);
@@ -140,7 +183,7 @@ public class CrimeFragment extends Fragment {
         mSuspectField.setText(mCrime.getSuspect());
         mPoliceNameField.setText(mCrime.getPoliceName());
         mPoliceNumberField.setText(mCrime.getPoliceNumber());
-        updateDate();
+        updateDateAndTime();
         updatePhotoView();
 
         // Show police info container if data exists for existing crimes
@@ -210,8 +253,16 @@ public class CrimeFragment extends Fragment {
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate(), mCrime.getId().toString() + "_date");
                 dialog.show(getParentFragmentManager(), DatePickerFragment.TAG);
+            }
+        });
+
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate(), mCrime.getId().toString() + "_time");
+                dialog.show(getParentFragmentManager(), TimePickerFragment.TAG);
             }
         });
 
@@ -294,8 +345,9 @@ public class CrimeFragment extends Fragment {
         mPhotoView.setImageDrawable(null);
     }
 
-    private void updateDate() {
+    private void updateDateAndTime() {
         mDateButton.setText(DateFormat.getDateInstance(DateFormat.FULL).format(mCrime.getDate()));
+        mTimeButton.setText(DateFormat.getTimeInstance(DateFormat.SHORT).format(mCrime.getDate()));
     }
 
     private String getCrimeReport() {
@@ -306,7 +358,7 @@ public class CrimeFragment extends Fragment {
             solvedString = getString(R.string.crime_report_unsolved);
         }
 
-        String dateString = DateFormat.getDateInstance(DateFormat.FULL).format(mCrime.getDate());
+        String dateString = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(mCrime.getDate());
 
         String suspect = mCrime.getSuspect();
         String suspectString;

@@ -1,6 +1,7 @@
 package com.example.criminalintent;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -15,10 +16,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.DateFormat;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
@@ -80,7 +83,7 @@ public class CrimeListFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.new_crime) {
-            Intent intent = CrimeActivity.newCrimeIntent(requireActivity());
+            Intent intent = CrimePagerActivity.newCrimeIntent(requireActivity());
             startActivity(intent);
             return true;
         }
@@ -132,6 +135,7 @@ public class CrimeListFragment extends Fragment {
         private Crime mCrime;
         private final TextView mTitleTextView;
         private final TextView mDateTextView;
+        private final TextView mStatusTextView;
         private final TextView mSuspectTextView;
         private final ImageView mSolvedImageView;
 
@@ -140,6 +144,7 @@ public class CrimeListFragment extends Fragment {
 
             itemView.setOnClickListener(this);
             mTitleTextView = itemView.findViewById(R.id.crime_title);
+            mStatusTextView = itemView.findViewById(R.id.crime_status);
             mDateTextView = itemView.findViewById(R.id.crime_date);
             mSuspectTextView = itemView.findViewById(R.id.crime_suspect);
             mSolvedImageView = itemView.findViewById(R.id.crime_solved_icon);
@@ -148,8 +153,19 @@ public class CrimeListFragment extends Fragment {
         public void bind(Crime crime) {
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDate().toString());
-            
+            mDateTextView.setText(DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(mCrime.getDate()));
+            mDateTextView.setVisibility(View.VISIBLE);
+
+            if (mCrime.isSolved()) {
+                mStatusTextView.setText(R.string.case_closed);
+                mSolvedImageView.setVisibility(View.VISIBLE);
+                mSolvedImageView.setColorFilter(ContextCompat.getColor(getActivity(), R.color.orange_primary));
+            } else {
+                mStatusTextView.setText(R.string.case_open);
+                mSolvedImageView.setVisibility(View.GONE);
+                mSolvedImageView.clearColorFilter();
+            }
+
             String suspect = mCrime.getSuspect();
             if (suspect != null && !suspect.isEmpty()) {
                 mSuspectTextView.setText("Suspect: " + suspect);
@@ -157,17 +173,11 @@ public class CrimeListFragment extends Fragment {
             } else {
                 mSuspectTextView.setVisibility(View.GONE);
             }
-
-            if (mCrime.isSolved()) {
-                mSolvedImageView.setVisibility(View.VISIBLE);
-            } else {
-                mSolvedImageView.setVisibility(View.GONE);
-            }
         }
 
         @Override
         public void onClick(View view) {
-            Intent intent = CrimeActivity.newIntent(requireActivity(), mCrime.getId());
+            Intent intent = CrimePagerActivity.newIntent(requireActivity(), mCrime.getId());
             startActivity(intent);
         }
     }
