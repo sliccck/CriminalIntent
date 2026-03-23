@@ -13,11 +13,11 @@
         android:id="@+id/crime_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="100dp"
         android:textAppearance="?attr/textAppearanceListItem"
         android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
+        app:layout_constraintEnd_toStartOf="@id/crime_delete"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,8 +29,7 @@
         android:layout_marginTop="4dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/orange_accent"
-        app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintEnd_toStartOf="@id/crime_delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/crime_title" />
 
@@ -41,7 +40,7 @@
         android:layout_marginTop="4dp"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#CCCCCC"
-        app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
+        app:layout_constraintEnd_toStartOf="@id/crime_delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/crime_status" />
 
@@ -54,7 +53,7 @@
         android:textColor="@color/orange_accent"
         android:textStyle="italic"
         android:visibility="gone"
-        app:layout_constraintEnd_toStartOf="@id/crime_solved_icon"
+        app:layout_constraintEnd_toStartOf="@id/crime_delete"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/crime_date" />
 
@@ -62,12 +61,25 @@
         android:id="@+id/crime_solved_icon"
         android:layout_width="24dp"
         android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
         android:contentDescription="@string/crime_solved"
         android:src="@drawable/ic_solved"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/crime_delete"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/crime_delete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Delete Crime"
+        android:src="@android:drawable/ic_menu_delete"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/orange_primary" />
 
     <View
         android:id="@+id/item_divider"

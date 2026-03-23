@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -78,6 +79,13 @@ public class CrimeListFragment extends Fragment {
         } else {
             subtitleItem.setTitle(R.string.show_subtitle);
         }
+
+        MenuItem newItem = menu.findItem(R.id.new_crime);
+        if (CrimeLab.get(requireActivity()).getCrimes().size() >= 10) {
+            newItem.setVisible(false);
+        } else {
+            newItem.setVisible(true);
+        }
     }
 
     @Override
@@ -111,6 +119,7 @@ public class CrimeListFragment extends Fragment {
         }
 
         updateSubtitle();
+        requireActivity().invalidateOptionsMenu();
     }
 
     private void updateSubtitle() {
@@ -138,6 +147,7 @@ public class CrimeListFragment extends Fragment {
         private final TextView mStatusTextView;
         private final TextView mSuspectTextView;
         private final ImageView mSolvedImageView;
+        private final ImageButton mDeleteButton;
 
         public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_crime, parent, false));
@@ -148,6 +158,15 @@ public class CrimeListFragment extends Fragment {
             mDateTextView = itemView.findViewById(R.id.crime_date);
             mSuspectTextView = itemView.findViewById(R.id.crime_suspect);
             mSolvedImageView = itemView.findViewById(R.id.crime_solved_icon);
+            mDeleteButton = itemView.findViewById(R.id.crime_delete);
+
+            mDeleteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    CrimeLab.get(requireActivity()).deleteCrime(mCrime);
+                    updateUI();
+                }
+            });
         }
 
         public void bind(Crime crime) {

@@ -18,14 +18,12 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -44,6 +42,7 @@ public class CrimeFragment extends Fragment {
     private Uri mPhotoUri;
     private boolean mIsNewCrime;
     private boolean mWasAdded;
+    private boolean mIsDeleted = false;
 
     private EditText mTitleField;
     private Button mDateButton;
@@ -51,14 +50,12 @@ public class CrimeFragment extends Fragment {
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private EditText mSuspectField;
+    private Button mSuspectButton;
     private Button mAddCrimeButton;
+    private ImageButton mDeleteCrimeButton;
     private Button mContactPoliceButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
-    private Button mAssignPoliceButton;
-    private LinearLayout mPoliceInfoContainer;
-    private EditText mPoliceNameField;
-    private EditText mPoliceNumberField;
 
     private final ActivityResultLauncher<Void> mPickContact =
         registerForActivityResult(new ActivityResultContracts.PickContact(), this::onContactSelected);
@@ -108,7 +105,6 @@ public class CrimeFragment extends Fragment {
                 mPhotoFile
         );
 
-        // Use the crime ID as the unique request key base
         String dateRequestKey = mCrime.getId().toString() + "_date";
         String timeRequestKey = mCrime.getId().toString() + "_time";
 
@@ -169,75 +165,37 @@ public class CrimeFragment extends Fragment {
         mSolvedCheckBox = view.findViewById(R.id.crime_solved);
         mReportButton = view.findViewById(R.id.crime_report);
         mSuspectField = view.findViewById(R.id.crime_suspect);
+        mSuspectButton = view.findViewById(R.id.crime_suspect_button);
         mAddCrimeButton = view.findViewById(R.id.crime_add);
+        mDeleteCrimeButton = view.findViewById(R.id.crime_delete);
         mContactPoliceButton = view.findViewById(R.id.contact_police_button);
         mPhotoButton = view.findViewById(R.id.crime_camera);
         mPhotoView = view.findViewById(R.id.crime_photo);
-        mAssignPoliceButton = view.findViewById(R.id.assign_police_button);
-        mPoliceInfoContainer = view.findViewById(R.id.police_info_container);
-        mPoliceNameField = view.findViewById(R.id.police_name);
-        mPoliceNumberField = view.findViewById(R.id.police_number);
 
         mTitleField.setText(mCrime.getTitle());
         mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSuspectField.setText(mCrime.getSuspect());
-        mPoliceNameField.setText(mCrime.getPoliceName());
-        mPoliceNumberField.setText(mCrime.getPoliceNumber());
+        
         updateDateAndTime();
         updatePhotoView();
 
-        // Show police info container if data exists for existing crimes
-        if (!mIsNewCrime && (!mCrime.getPoliceName().isEmpty() || !mCrime.getPoliceNumber().isEmpty())) {
-            mPoliceInfoContainer.setVisibility(View.VISIBLE);
-        }
-
         mTitleField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                mCrime.setTitle(charSequence.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
-
-        mSuspectField.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                mCrime.setSuspect(charSequence.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
-
-        mPoliceNameField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                mCrime.setPoliceName(charSequence.toString());
+                mCrime.setTitle(charSequence.toString());
             }
             @Override
             public void afterTextChanged(Editable editable) {}
         });
 
-        mPoliceNumberField.addTextChangedListener(new TextWatcher() {
+        mSuspectField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                mCrime.setPoliceNumber(charSequence.toString());
+                mCrime.setSuspect(charSequence.toString());
             }
             @Override
             public void afterTextChanged(Editable editable) {}
@@ -288,28 +246,35 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        mAssignPoliceButton.setOnClickListener(new View.OnClickListener() {
+        mSuspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPoliceInfoContainer.setVisibility(
-                        mPoliceInfoContainer.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE
-                );
+                mPickContact.launch(null);
             }
         });
 
         mContactPoliceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AlertDialog.Builder(requireContext())
-                        .setTitle(R.string.contacting_police_title)
-                        .setMessage(R.string.contacting_police_message)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
+                String suspectNumber = mCrime.getSuspectNumber();
+                Intent intent;
+                if (suspectNumber != null && !suspectNumber.isEmpty()) {
+                    intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + suspectNumber));
+                } else {
+                    intent = new Intent(Intent.ACTION_VIEW, ContactsContract.Contacts.CONTENT_URI);
+                }
+
+                try {
+                    startActivity(intent);
+                } catch (ActivityNotFoundException e) {
+                    Toast.makeText(requireActivity(), R.string.no_contacts_app, Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         if (mIsNewCrime && !mWasAdded) {
             mAddCrimeButton.setVisibility(View.VISIBLE);
+            mDeleteCrimeButton.setVisibility(View.GONE);
             mContactPoliceButton.setVisibility(View.GONE);
             mAddCrimeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -321,10 +286,28 @@ public class CrimeFragment extends Fragment {
             });
         } else {
             mAddCrimeButton.setVisibility(View.GONE);
+            mDeleteCrimeButton.setVisibility(View.VISIBLE);
             mContactPoliceButton.setVisibility(View.VISIBLE);
         }
 
+        mDeleteCrimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CrimeLab.get(requireActivity()).deleteCrime(mCrime);
+                mIsDeleted = true;
+                requireActivity().finish();
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!mIsDeleted && (!mIsNewCrime || mWasAdded)) {
+            CrimeLab.get(requireActivity()).updateCrime(mCrime);
+        }
     }
 
     @Override
@@ -351,66 +334,51 @@ public class CrimeFragment extends Fragment {
     }
 
     private String getCrimeReport() {
-        String solvedString;
-        if (mCrime.isSolved()) {
-            solvedString = getString(R.string.crime_report_solved);
-        } else {
-            solvedString = getString(R.string.crime_report_unsolved);
-        }
-
+        String solvedString = mCrime.isSolved() ? getString(R.string.crime_report_solved) : getString(R.string.crime_report_unsolved);
         String dateString = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(mCrime.getDate());
-
         String suspect = mCrime.getSuspect();
-        String suspectString;
-        if (suspect == null || suspect.isEmpty()) {
-            suspectString = getString(R.string.crime_report_no_suspect);
-        } else {
-            suspectString = getString(R.string.crime_report_suspect, suspect);
-        }
+        String suspectString = (suspect == null || suspect.isEmpty()) ? getString(R.string.crime_report_no_suspect) : getString(R.string.crime_report_suspect, suspect);
 
-        String policeName = mCrime.getPoliceName();
-        String policeNumber = mCrime.getPoliceNumber();
-        String policeString = "";
-        if (!policeName.isEmpty() || !policeNumber.isEmpty()) {
-            policeString = "\nAssigned Police: " + policeName + " (" + policeNumber + ")";
-        }
-
-        return getString(R.string.crime_report,
-                mCrime.getTitle(), dateString, solvedString, suspectString) + policeString;
+        return getString(R.string.crime_report, mCrime.getTitle(), dateString, solvedString, suspectString);
     }
 
     private void onContactSelected(Uri contactUri) {
-        // No longer used since we're using EditText for suspect name
+        if (contactUri == null) return;
+        String[] queryFields = new String[]{ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts._ID};
+        try (Cursor cursor = requireActivity().getContentResolver().query(contactUri, queryFields, null, null, null)) {
+            if (cursor == null || cursor.getCount() == 0) return;
+            cursor.moveToFirst();
+            String suspectName = cursor.getString(0);
+            String contactId = cursor.getString(1);
+            mCrime.setSuspect(suspectName);
+            mSuspectField.setText(suspectName);
+
+            try (Cursor phoneCursor = requireActivity().getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                    new String[]{contactId}, null)) {
+                if (phoneCursor != null && phoneCursor.moveToFirst()) {
+                    String number = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    mCrime.setSuspectNumber(number);
+                }
+            } catch (SecurityException se) {
+                Toast.makeText(requireActivity(), "Cannot access phone number without permission.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void onPhotoCaptured(Boolean didTakePhoto) {
-        if (Boolean.TRUE.equals(didTakePhoto)) {
-            updatePhotoView();
-        }
+        if (didTakePhoto) updatePhotoView();
     }
 
     private void updatePhotoView() {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
             mPhotoView.setContentDescription(getString(R.string.crime_photo_no_image_description));
-            return;
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), requireActivity());
+            mPhotoView.setImageBitmap(bitmap);
+            mPhotoView.setContentDescription(getString(R.string.crime_photo_image_description));
         }
-
-        int width = mPhotoView.getWidth();
-        int height = mPhotoView.getHeight();
-
-        if (width <= 0 || height <= 0) {
-            mPhotoView.post(new Runnable() {
-                @Override
-                public void run() {
-                    updatePhotoView();
-                }
-            });
-            return;
-        }
-
-        Bitmap scaledBitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), width, height);
-        mPhotoView.setImageBitmap(scaledBitmap);
-        mPhotoView.setContentDescription(getString(R.string.crime_photo_image_description));
     }
 }

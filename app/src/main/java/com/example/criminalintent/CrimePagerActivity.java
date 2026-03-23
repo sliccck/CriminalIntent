@@ -71,6 +71,11 @@ public class CrimePagerActivity extends AppCompatActivity {
             public int getCount() {
                 return mCrimes.size();
             }
+
+            @Override
+            public int getItemPosition(@NonNull Object object) {
+                return POSITION_NONE;
+            }
         });
 
         for (int i = 0; i < mCrimes.size(); i++) {
@@ -131,5 +136,13 @@ public class CrimePagerActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCrimes = CrimeLab.get(this).getCrimes();
+        mViewPager.getAdapter().notifyDataSetChanged();
+        updateNavigationButtons();
     }
 }

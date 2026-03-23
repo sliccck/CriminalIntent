@@ -8,7 +8,7 @@
     <string name="hide_subtitle">Hide Subtitle</string>
     <string name="title_section">TITLE</string>
     <string name="details_section">DETAILS</string>
-    <string name="crime_suspect">CHOOSE SUSPECT</string>
+    <string name="crime_suspect">Choose Suspect</string>
     <string name="send_report">SEND CRIME REPORT</string>
     <string name="add_crime">ADD CRIME</string>
     <string name="crime_report_subject">Crime Report</string>
@@ -27,6 +27,7 @@
     <string name="contacting_police_message">Help is on the way!</string>
     <string name="case_closed">case is close</string>
     <string name="case_open">case is open</string>
+    <string name="add_contact">ADD CONTACT</string>
 
     <plurals name="subtitle_plural">
         <item quantity="one">%d crime</item>
