@@ -34,11 +34,17 @@
     </style>
 
     <style name="Theme.CriminalIntent.AlertDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert">
-        <item name="android:windowBackground">@color/black</item>
-        <item name="android:colorBackground">#222222</item>
+        <!-- Set a slightly lighter background for the dialog content -->
+        <item name="android:colorBackground">#333333</item>
         <item name="colorAccent">@color/orange_primary</item>
+
+        <!-- Ensure text colors are white -->
+        <item name="android:textColor">@color/white</item>
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/orange_accent</item>
+
+        <!-- Fix for list items in AlertDialog -->
+        <item name="android:textColorAlertDialogListItem">@color/white</item>
 
         <!-- TimePicker styling -->
         <item name="android:timePickerStyle">@style/Widget.CriminalIntent.TimePicker</item>

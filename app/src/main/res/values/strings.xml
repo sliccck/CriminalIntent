@@ -3,9 +3,8 @@
     <string name="crime_title_prefix">Crime #%1$d</string>
     <string name="crime_title_hint">Enter a title for the crime.</string>
     <string name="crime_solved">Solved</string>
-    <string name="new_crime">New Crime</string>
-    <string name="show_subtitle">Show Subtitle</string>
-    <string name="hide_subtitle">Hide Subtitle</string>
+    <string name="new_crime">NEW CRIME</string>
+    <string name="change_language">Change Language</string>
     <string name="title_section">TITLE</string>
     <string name="details_section">DETAILS</string>
     <string name="crime_suspect">Choose Suspect</string>
@@ -28,9 +27,7 @@
     <string name="case_closed">case is close</string>
     <string name="case_open">case is open</string>
     <string name="add_contact">ADD CONTACT</string>
-
-    <plurals name="subtitle_plural">
-        <item quantity="one">%d crime</item>
-        <item quantity="other">%d crimes</item>
-    </plurals>
+    <string name="welcome_message">Welcome!\nPlease select crime on the side</string>
+    <string name="suspect_section">SUSPECT</string>
+    <string name="suspect_name_hint">Enter suspect name</string>
 </resources>

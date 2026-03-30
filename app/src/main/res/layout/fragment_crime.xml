@@ -12,13 +12,25 @@
         android:padding="16dp">
 
         <ImageButton
+            android:id="@+id/crime_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:contentDescription="Back to Welcome"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/orange_primary" />
+
+        <ImageButton
             android:id="@+id/crime_delete"
             android:layout_width="48dp"
             android:layout_height="48dp"
+            android:layout_marginStart="8dp"
             android:contentDescription="Delete Crime"
             android:src="@android:drawable/ic_menu_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/crime_back"
             app:layout_constraintTop_toTopOf="parent"
             app:tint="@color/orange_primary" />
 
@@ -116,7 +128,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:text="SUSPECT"
+            android:text="@string/suspect_section"
             android:textColor="@color/orange_primary"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +139,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:hint="Enter suspect name"
+            android:hint="@string/suspect_name_hint"
             android:textColor="@color/white"
             android:textColorHint="#888888"
             android:importantForAutofill="no"

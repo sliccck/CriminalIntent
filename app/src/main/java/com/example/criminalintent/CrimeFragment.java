@@ -1,6 +1,7 @@
 package com.example.criminalintent;
 
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import java.io.File;
 import java.text.DateFormat;
@@ -53,9 +55,21 @@ public class CrimeFragment extends Fragment {
     private Button mSuspectButton;
     private Button mAddCrimeButton;
     private ImageButton mDeleteCrimeButton;
+    private ImageButton mBackButton;
     private Button mContactPoliceButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+
+    private Callbacks mCallbacks;
+
+    /**
+     * Required interface for hosting activities.
+     */
+    public interface Callbacks {
+        void onCrimeUpdated(Crime crime);
+        void onCrimeDeleted(Crime crime);
+        void onBackSelected();
+    }
 
     private final ActivityResultLauncher<Void> mPickContact =
         registerForActivityResult(new ActivityResultContracts.PickContact(), this::onContactSelected);
@@ -75,6 +89,18 @@ public class CrimeFragment extends Fragment {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        mCallbacks = (Callbacks) context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     @Override
@@ -115,6 +141,7 @@ public class CrimeFragment extends Fragment {
                     Date date = (Date) bundle.getSerializable(DatePickerFragment.RESULT_DATE);
                     updateCrimeDate(date);
                     updateDateAndTime();
+                    updateCrime();
                 }
         );
 
@@ -125,8 +152,14 @@ public class CrimeFragment extends Fragment {
                     Date date = (Date) bundle.getSerializable(TimePickerFragment.RESULT_TIME);
                     updateCrimeTime(date);
                     updateDateAndTime();
+                    updateCrime();
                 }
         );
+    }
+
+    private void updateCrime() {
+        CrimeLab.get(getActivity()).updateCrime(mCrime);
+        mCallbacks.onCrimeUpdated(mCrime);
     }
 
     private void updateCrimeDate(Date date) {
@@ -168,6 +201,7 @@ public class CrimeFragment extends Fragment {
         mSuspectButton = view.findViewById(R.id.crime_suspect_button);
         mAddCrimeButton = view.findViewById(R.id.crime_add);
         mDeleteCrimeButton = view.findViewById(R.id.crime_delete);
+        mBackButton = view.findViewById(R.id.crime_back);
         mContactPoliceButton = view.findViewById(R.id.contact_police_button);
         mPhotoButton = view.findViewById(R.id.crime_camera);
         mPhotoView = view.findViewById(R.id.crime_photo);
@@ -185,6 +219,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setTitle(charSequence.toString());
+                updateCrime();
             }
             @Override
             public void afterTextChanged(Editable editable) {}
@@ -196,6 +231,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 mCrime.setSuspect(charSequence.toString());
+                updateCrime();
             }
             @Override
             public void afterTextChanged(Editable editable) {}
@@ -205,6 +241,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                updateCrime();
             }
         });
 
@@ -281,7 +318,10 @@ public class CrimeFragment extends Fragment {
                 public void onClick(View view) {
                     CrimeLab.get(requireActivity()).addCrime(mCrime);
                     mWasAdded = true;
-                    requireActivity().finish();
+                    mCallbacks.onCrimeUpdated(mCrime);
+                    if (getActivity().findViewById(R.id.detail_fragment_container) == null) {
+                        requireActivity().finish();
+                    }
                 }
             });
         } else {
@@ -295,7 +335,25 @@ public class CrimeFragment extends Fragment {
             public void onClick(View view) {
                 CrimeLab.get(requireActivity()).deleteCrime(mCrime);
                 mIsDeleted = true;
-                requireActivity().finish();
+                mCallbacks.onCrimeDeleted(mCrime);
+            }
+        });
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCallbacks.onBackSelected();
+            }
+        });
+
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mPhotoFile != null && mPhotoFile.exists()) {
+                    FragmentManager manager = getParentFragmentManager();
+                    ImageDetailFragment dialog = ImageDetailFragment.newInstance(mPhotoFile.getPath());
+                    dialog.show(manager, "image_detail");
+                }
             }
         });
 
@@ -364,11 +422,15 @@ public class CrimeFragment extends Fragment {
             } catch (SecurityException se) {
                 Toast.makeText(requireActivity(), "Cannot access phone number without permission.", Toast.LENGTH_SHORT).show();
             }
+            updateCrime();
         }
     }
 
     private void onPhotoCaptured(Boolean didTakePhoto) {
-        if (didTakePhoto) updatePhotoView();
+        if (didTakePhoto) {
+            updatePhotoView();
+            updateCrime();
+        }
     }
 
     private void updatePhotoView() {

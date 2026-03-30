@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">CriminalIntent</string>
+    <string name="crime_title_prefix">Crimen #%1$d</string>
+    <string name="crime_title_hint">Ingrese un título para el crimen.</string>
+    <string name="crime_solved">Resuelto</string>
+    <string name="new_crime">NUEVO CRIMEN</string>
+    <string name="change_language">Cambiar idioma</string>
+    <string name="title_section">TÍTULO</string>
+    <string name="details_section">DETALLES</string>
+    <string name="crime_suspect">Elegir sospechoso</string>
+    <string name="send_report">ENVIAR INFORME DE CRIMEN</string>
+    <string name="add_crime">AGREGAR CRIMEN</string>
+    <string name="crime_report_subject">Informe de crimen</string>
+    <string name="crime_report_solved">El crimen está resuelto.</string>
+    <string name="crime_report_unsolved">El crimen no está resuelto.</string>
+    <string name="crime_report_no_suspect">No hay sospechoso.</string>
+    <string name="crime_report_suspect">Sospechoso: %1$s.</string>
+    <string name="crime_report">Crimen: %1$s\nFecha: %2$s\nEstado: %3$s\n%4$s</string>
+    <string name="crime_camera">Tomar foto</string>
+    <string name="crime_photo_no_image_description">No se ha tomado ninguna foto</string>
+    <string name="crime_photo_image_description">Foto del crimen</string>
+    <string name="no_contacts_app">No hay aplicación de contactos disponible.</string>
+    <string name="no_camera_app">No hay aplicación de cámara disponible.</string>
+    <string name="contact_police">CONTACTAR A LA POLICÍA</string>
+    <string name="contacting_police_title">Contactando a la policía</string>
+    <string name="contacting_police_message">¡La ayuda está en camino!</string>
+    <string name="case_closed">el caso está cerrado</string>
+    <string name="case_open">el caso está abierto</string>
+    <string name="add_contact">AGREGAR CONTACTO</string>
+    <string name="welcome_message">¡Bienvenido!\nPor favor seleccione un crimen en el lateral</string>
+    <string name="suspect_section">SOSPECHOSO</string>
+    <string name="suspect_name_hint">Ingrese el nombre del sospechoso</string>
+</resources>

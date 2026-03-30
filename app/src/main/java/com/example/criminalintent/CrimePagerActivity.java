@@ -17,7 +17,8 @@ import androidx.viewpager.widget.ViewPager;
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends AppCompatActivity {
+public class CrimePagerActivity extends AppCompatActivity 
+        implements CrimeFragment.Callbacks {
 
     private static final String EXTRA_CRIME_ID = "com.example.criminalintent.crime_id";
     private static final String EXTRA_IS_NEW_CRIME = "com.example.criminalintent.is_new_crime";
@@ -144,5 +145,20 @@ public class CrimePagerActivity extends AppCompatActivity {
         mCrimes = CrimeLab.get(this).getCrimes();
         mViewPager.getAdapter().notifyDataSetChanged();
         updateNavigationButtons();
+    }
+
+    @Override
+    public void onCrimeUpdated(Crime crime) {
+        // Nothing to do in the pager activity for now
+    }
+
+    @Override
+    public void onCrimeDeleted(Crime crime) {
+        finish();
+    }
+
+    @Override
+    public void onBackSelected() {
+        finish();
     }
 }
